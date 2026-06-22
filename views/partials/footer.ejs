@@ -1,0 +1,13 @@
+      </div>
+    </main>
+  </div>
+  <script>
+    // Mobile sidebar toggle
+    document.querySelector('.topbar')?.addEventListener('click', (e) => {
+      if (e.target.closest('.menu-toggle') || window.innerWidth <= 768) {
+        document.querySelector('.sidebar').classList.toggle('open');
+      }
+    });
+  </script>
+</body>
+</html>

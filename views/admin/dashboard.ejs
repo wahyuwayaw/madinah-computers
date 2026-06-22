@@ -1,0 +1,58 @@
+<%- include('../partials/header', { active: 'dashboard', pageTitle: 'Dashboard' }) %>
+
+<div class="dashboard-grid">
+  <div class="stat-card">
+    <div class="stat-icon" style="background:#dbeafe;color:#2563eb"><i class="fas fa-image"></i></div>
+    <div class="stat-info">
+      <span class="stat-label">Hero Section</span>
+      <span class="stat-value"><%= settings.hero ? 'Tersimpan' : 'Belum diisi' %></span>
+    </div>
+    <a href="/admin/hero" class="stat-link">Edit →</a>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon" style="background:#dcfce7;color:#16a34a"><i class="fas fa-info-circle"></i></div>
+    <div class="stat-info">
+      <span class="stat-label">About</span>
+      <span class="stat-value"><%= settings.about ? 'Tersimpan' : 'Belum diisi' %></span>
+    </div>
+    <a href="/admin/about" class="stat-link">Edit →</a>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon" style="background:#fef3c7;color:#d97706"><i class="fas fa-tools"></i></div>
+    <div class="stat-info">
+      <span class="stat-label">Services</span>
+      <span class="stat-value"><%= settings.services ? (Array.isArray(settings.services) ? settings.services.length + ' layanan' : 'Tersimpan') : 'Belum diisi' %></span>
+    </div>
+    <a href="/admin/services" class="stat-link">Edit →</a>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon" style="background:#ede9fe;color:#7c3aed"><i class="fas fa-download"></i></div>
+    <div class="stat-info">
+      <span class="stat-label">Software</span>
+      <span class="stat-value"><%= settings.software ? (Array.isArray(settings.software) ? settings.software.length + ' software' : 'Tersimpan') : 'Belum diisi' %></span>
+    </div>
+    <a href="/admin/software" class="stat-link">Edit →</a>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon" style="background:#fce7f3;color:#db2777"><i class="fas fa-shoe-prints"></i></div>
+    <div class="stat-info">
+      <span class="stat-label">Footer</span>
+      <span class="stat-value"><%= settings.footer ? 'Tersimpan' : 'Belum diisi' %></span>
+    </div>
+    <a href="/admin/footer" class="stat-link">Edit →</a>
+  </div>
+</div>
+
+<div class="info-box" style="margin-top:2rem">
+  <h3><i class="fas fa-info-circle"></i> Cara Kerja</h3>
+  <ul>
+    <li>Edit konten website dari halaman admin ini</li>
+    <li>Perubahan langsung tersimpan ke database MySQL</li>
+    <li>Website publik akan mengambil data dari database secara real-time</li>
+    <li>Admin panel menggunakan EJS server-side rendering</li>
+    <li>Website publik menggunakan React SPA</li>
+  </ul>
+  <p style="margin-top:1rem"><a href="/docs" target="_blank" class="btn btn-primary btn-sm"><i class="fas fa-book"></i> Baca Dokumentasi Lengkap</a></p>
+</div>
+
+<%- include('../partials/footer') %>

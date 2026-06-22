@@ -1,0 +1,50 @@
+<%- include('../partials/header', { active: 'about', pageTitle: 'Edit About Section' }) %>
+
+<% if (saved) { %>
+  <div class="alert alert-success"><i class="fas fa-check-circle"></i> Berhasil disimpan!</div>
+<% } %>
+
+<form method="POST" action="/admin/about" class="editor-form">
+  <div class="form-card">
+    <div class="form-group">
+      <label for="label">Label</label>
+      <input type="text" id="label" name="label" value="<%= data.label || '' %>">
+    </div>
+    <div class="form-group">
+      <label for="heading">Heading</label>
+      <input type="text" id="heading" name="heading" value="<%= data.heading || '' %>">
+    </div>
+    <div class="form-group">
+      <label for="description">Deskripsi</label>
+      <textarea id="description" name="description" rows="5"><%= data.description || '' %></textarea>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="image1">Image 1 Path</label>
+        <input type="text" id="image1" name="image1" value="<%= data.image1 || '' %>">
+      </div>
+      <div class="form-group">
+        <label for="image2">Image 2 Path</label>
+        <input type="text" id="image2" name="image2" value="<%= data.image2 || '' %>">
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="servicesBadge">Services Badge</label>
+      <input type="text" id="servicesBadge" name="servicesBadge" value="<%= data.servicesBadge || '' %>">
+    </div>
+    <div class="form-group">
+      <label for="servicesTitle">Services Title</label>
+      <input type="text" id="servicesTitle" name="servicesTitle" value="<%= data.servicesTitle || '' %>">
+    </div>
+    <div class="form-group">
+      <label for="servicesDesc">Services Description</label>
+      <textarea id="servicesDesc" name="servicesDesc" rows="3"><%= data.servicesDesc || '' %></textarea>
+    </div>
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Simpan</button>
+      <a href="/admin" class="btn btn-secondary">Kembali</a>
+    </div>
+  </div>
+</form>
+
+<%- include('../partials/footer') %>

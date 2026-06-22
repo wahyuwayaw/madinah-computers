@@ -1,0 +1,36 @@
+<%- include('../partials/header', { active: 'footer', pageTitle: 'Edit Footer' }) %>
+
+<% if (saved) { %>
+  <div class="alert alert-success"><i class="fas fa-check-circle"></i> Berhasil disimpan!</div>
+<% } %>
+
+<form method="POST" action="/admin/footer" class="editor-form">
+  <div class="form-card">
+    <div class="form-group">
+      <label for="companyName">Nama Perusahaan</label>
+      <input type="text" id="companyName" name="companyName" value="<%= data.companyName || '' %>">
+    </div>
+    <div class="form-group">
+      <label for="officeAddress">Alamat Kantor</label>
+      <textarea id="officeAddress" name="officeAddress" rows="2"><%= data.officeAddress || '' %></textarea>
+    </div>
+    <div class="form-group">
+      <label for="workshopAddress">Alamat Workshop</label>
+      <input type="text" id="workshopAddress" name="workshopAddress" value="<%= data.workshopAddress || '' %>">
+    </div>
+    <div class="form-group">
+      <label for="phones">Telepon (pisahkan koma)</label>
+      <input type="text" id="phones" name="phones" value="<%= (data.phones || []).join(', ') %>">
+    </div>
+    <div class="form-group">
+      <label for="emails">Email (pisahkan koma)</label>
+      <input type="text" id="emails" name="emails" value="<%= (data.emails || []).join(', ') %>">
+    </div>
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Simpan</button>
+      <a href="/admin" class="btn btn-secondary">Kembali</a>
+    </div>
+  </div>
+</form>
+
+<%- include('../partials/footer') %>

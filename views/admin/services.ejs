@@ -1,0 +1,89 @@
+<%- include('../partials/header', { active: 'services', pageTitle: 'Edit Services' }) %>
+
+<% if (saved) { %>
+  <div class="alert alert-success"><i class="fas fa-check-circle"></i> Berhasil disimpan!</div>
+<% } %>
+
+<form method="POST" action="/admin/services" class="editor-form" id="servicesForm">
+  <input type="hidden" name="data" id="servicesData">
+  
+  <div id="servicesList">
+    <% if (Array.isArray(data)) { data.forEach(function(service, idx) { %>
+      <div class="form-card service-card" data-index="<%= idx %>">
+        <div class="card-header">
+          <h3>Service #<%= idx + 1 %></h3>
+          <button type="button" class="btn btn-danger btn-sm remove-service"><i class="fas fa-trash"></i> Hapus</button>
+        </div>
+        <div class="form-group">
+          <label>ID</label>
+          <input type="text" class="svc-id" value="<%= service.id || '' %>">
+        </div>
+        <div class="form-group">
+          <label>Judul</label>
+          <input type="text" class="svc-title" value="<%= service.title || '' %>">
+        </div>
+        <div class="form-group">
+          <label>Cover Image Path</label>
+          <input type="text" class="svc-cover" value="<%= service.cover || '' %>">
+        </div>
+        <div class="form-group">
+          <label>Deskripsi</label>
+          <textarea class="svc-desc" rows="3"><%= service.desc || '' %></textarea>
+        </div>
+        <div class="form-group">
+          <label>Points (satu per baris)</label>
+          <textarea class="svc-points" rows="4"><%= (service.points || []).join('\n') %></textarea>
+        </div>
+      </div>
+    <% }); } %>
+  </div>
+
+  <div class="form-actions">
+    <button type="button" class="btn btn-success" id="addService"><i class="fas fa-plus"></i> Tambah Service</button>
+    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Simpan Semua</button>
+    <a href="/admin" class="btn btn-secondary">Kembali</a>
+  </div>
+</form>
+
+<script>
+document.getElementById('addService').addEventListener('click', function() {
+  const list = document.getElementById('servicesList');
+  const idx = list.children.length;
+  const card = document.createElement('div');
+  card.className = 'form-card service-card';
+  card.dataset.index = idx;
+  card.innerHTML = `
+    <div class="card-header"><h3>Service #${idx+1}</h3><button type="button" class="btn btn-danger btn-sm remove-service"><i class="fas fa-trash"></i> Hapus</button></div>
+    <div class="form-group"><label>ID</label><input type="text" class="svc-id" value=""></div>
+    <div class="form-group"><label>Judul</label><input type="text" class="svc-title" value=""></div>
+    <div class="form-group"><label>Cover Image Path</label><input type="text" class="svc-cover" value=""></div>
+    <div class="form-group"><label>Deskripsi</label><textarea class="svc-desc" rows="3"></textarea></div>
+    <div class="form-group"><label>Points (satu per baris)</label><textarea class="svc-points" rows="4"></textarea></div>
+  `;
+  list.appendChild(card);
+});
+
+document.addEventListener('click', function(e) {
+  if (e.target.classList.contains('remove-service')) {
+    e.target.closest('.service-card').remove();
+  }
+});
+
+document.getElementById('servicesForm').addEventListener('submit', function(e) {
+  const cards = document.querySelectorAll('.service-card');
+  const services = [];
+  cards.forEach(card => {
+    services.push({
+      id: card.querySelector('.svc-id').value,
+      title: card.querySelector('.svc-title').value,
+      cover: card.querySelector('.svc-cover').value,
+      desc: card.querySelector('.svc-desc').value,
+      points: card.querySelector('.svc-points').value.split('\n').filter(p => p.trim()),
+      gallery: []
+    });
+  });
+  document.getElementById('servicesData').value = JSON.stringify(services);
+});
+</script>
+
+<%- include('../partials/footer') %>

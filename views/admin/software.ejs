@@ -1,0 +1,88 @@
+<%- include('../partials/header', { active: 'software', pageTitle: 'Edit Software' }) %>
+
+<% if (saved) { %>
+  <div class="alert alert-success"><i class="fas fa-check-circle"></i> Berhasil disimpan!</div>
+<% } %>
+
+<form method="POST" action="/admin/software" class="editor-form" id="softwareForm">
+  <input type="hidden" name="data" id="softwareData">
+  
+  <div id="softwareList">
+    <% if (Array.isArray(data)) { data.forEach(function(sw, idx) { %>
+      <div class="form-card software-card" data-index="<%= idx %>">
+        <div class="card-header">
+          <h3>Software #<%= idx + 1 %></h3>
+          <button type="button" class="btn btn-danger btn-sm remove-software"><i class="fas fa-trash"></i> Hapus</button>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>ID</label><input type="text" class="sw-id" value="<%= sw.id || '' %>"></div>
+          <div class="form-group"><label>Icon (emoji)</label><input type="text" class="sw-icon" value="<%= sw.icon || '' %>"></div>
+        </div>
+        <div class="form-group"><label>Judul</label><input type="text" class="sw-title" value="<%= sw.title || '' %>"></div>
+        <div class="form-row">
+          <div class="form-group"><label>Version</label><input type="text" class="sw-version" value="<%= sw.version || '' %>"></div>
+          <div class="form-group"><label>Size</label><input type="text" class="sw-size" value="<%= sw.size || '' %>"></div>
+          <div class="form-group"><label>Category</label><input type="text" class="sw-category" value="<%= sw.category || '' %>"></div>
+        </div>
+        <div class="form-group"><label>Deskripsi</label><textarea class="sw-desc" rows="3"><%= sw.desc || '' %></textarea></div>
+        <div class="form-group"><label>Points (satu per baris)</label><textarea class="sw-points" rows="4"><%= (sw.points || []).join('\n') %></textarea></div>
+        <div class="form-group"><label>Download URL</label><input type="text" class="sw-url" value="<%= sw.downloadUrl || '' %>"></div>
+        <div class="form-group"><label>Image Path</label><input type="text" class="sw-image" value="<%= sw.image || '' %>"></div>
+      </div>
+    <% }); } %>
+  </div>
+
+  <div class="form-actions">
+    <button type="button" class="btn btn-success" id="addSoftware"><i class="fas fa-plus"></i> Tambah Software</button>
+    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Simpan Semua</button>
+    <a href="/admin" class="btn btn-secondary">Kembali</a>
+  </div>
+</form>
+
+<script>
+document.getElementById('addSoftware').addEventListener('click', function() {
+  const list = document.getElementById('softwareList');
+  const idx = list.children.length;
+  const card = document.createElement('div');
+  card.className = 'form-card software-card';
+  card.innerHTML = `
+    <div class="card-header"><h3>Software #${idx+1}</h3><button type="button" class="btn btn-danger btn-sm remove-software"><i class="fas fa-trash"></i> Hapus</button></div>
+    <div class="form-row"><div class="form-group"><label>ID</label><input type="text" class="sw-id"></div><div class="form-group"><label>Icon</label><input type="text" class="sw-icon"></div></div>
+    <div class="form-group"><label>Judul</label><input type="text" class="sw-title"></div>
+    <div class="form-row"><div class="form-group"><label>Version</label><input type="text" class="sw-version"></div><div class="form-group"><label>Size</label><input type="text" class="sw-size"></div><div class="form-group"><label>Category</label><input type="text" class="sw-category"></div></div>
+    <div class="form-group"><label>Deskripsi</label><textarea class="sw-desc" rows="3"></textarea></div>
+    <div class="form-group"><label>Points</label><textarea class="sw-points" rows="4"></textarea></div>
+    <div class="form-group"><label>Download URL</label><input type="text" class="sw-url"></div>
+    <div class="form-group"><label>Image Path</label><input type="text" class="sw-image"></div>
+  `;
+  list.appendChild(card);
+});
+
+document.addEventListener('click', function(e) {
+  if (e.target.classList.contains('remove-software')) {
+    e.target.closest('.software-card').remove();
+  }
+});
+
+document.getElementById('softwareForm').addEventListener('submit', function(e) {
+  const cards = document.querySelectorAll('.software-card');
+  const software = [];
+  cards.forEach(card => {
+    software.push({
+      id: card.querySelector('.sw-id').value,
+      icon: card.querySelector('.sw-icon').value,
+      title: card.querySelector('.sw-title').value,
+      version: card.querySelector('.sw-version').value,
+      size: card.querySelector('.sw-size').value,
+      category: card.querySelector('.sw-category').value,
+      desc: card.querySelector('.sw-desc').value,
+      points: card.querySelector('.sw-points').value.split('\n').filter(p => p.trim()),
+      downloadUrl: card.querySelector('.sw-url').value,
+      image: card.querySelector('.sw-image').value
+    });
+  });
+  document.getElementById('softwareData').value = JSON.stringify(software);
+});
+</script>
+
+<%- include('../partials/footer') %>

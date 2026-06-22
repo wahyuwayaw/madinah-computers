@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Madinah Computers</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="/admin/public/admin.css">
+</head>
+<body>
+  <div class="admin-layout">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <img src="/assets/logo/logo_madinahcomputers.png" alt="Logo" class="sidebar-logo">
+        <span class="sidebar-brand">Madinah Computers</span>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="/admin" class="nav-item <%= typeof active !== 'undefined' && active === 'dashboard' ? 'active' : '' %>">
+          <i class="fas fa-tachometer-alt"></i> Dashboard
+        </a>
+        <a href="/admin/hero" class="nav-item <%= typeof active !== 'undefined' && active === 'hero' ? 'active' : '' %>">
+          <i class="fas fa-image"></i> Hero Section
+        </a>
+        <a href="/admin/about" class="nav-item <%= typeof active !== 'undefined' && active === 'about' ? 'active' : '' %>">
+          <i class="fas fa-info-circle"></i> About
+        </a>
+        <a href="/admin/services" class="nav-item <%= typeof active !== 'undefined' && active === 'services' ? 'active' : '' %>">
+          <i class="fas fa-tools"></i> Services
+        </a>
+        <a href="/admin/software" class="nav-item <%= typeof active !== 'undefined' && active === 'software' ? 'active' : '' %>">
+          <i class="fas fa-download"></i> Software
+        </a>
+        <a href="/admin/footer" class="nav-item <%= typeof active !== 'undefined' && active === 'footer' ? 'active' : '' %>">
+          <i class="fas fa-shoe-prints"></i> Footer
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <a href="/docs" target="_blank" class="nav-item"><i class="fas fa-book"></i> Dokumentasi</a>
+        <a href="/" target="_blank" class="nav-item"><i class="fas fa-external-link-alt"></i> Lihat Website</a>
+        <a href="/admin/logout" class="nav-item logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+      </div>
+    </aside>
+    <main class="main-content">
+      <div class="topbar">
+        <h1 class="page-title"><%= typeof pageTitle !== 'undefined' ? pageTitle : 'Dashboard' %></h1>
+        <div class="topbar-right">
+          <span class="admin-name"><i class="fas fa-user-circle"></i> <%= admin.username %></span>
+        </div>
+      </div>
+      <div class="content-area">
