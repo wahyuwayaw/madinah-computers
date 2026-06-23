@@ -1,6 +1,22 @@
 import { Router } from 'express';
 import bcrypt from 'bcryptjs';
+import multer from 'multer';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import pool from '../db.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Multer config for hero image upload
+const storage = multer.diskStorage({
+  destination: path.join(__dirname, '..', 'public', 'assets', 'madinah'),
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname);
+    cb(null, 'hero-' + Date.now() + ext);
+  }
+});
+const upload = multer({ storage, limits: { fileSize: 5 * 1024 * 1024 } });
 
 const router = Router();
 
@@ -63,9 +79,13 @@ router.get('/hero', requireAuth, async (req, res) => {
 });
 
 // POST /admin/hero
-router.post('/hero', requireAuth, async (req, res) => {
-  const { heading, subtitle } = req.body;
-  const data = { heading, subtitle };
+router.post('/hero', requireAuth, upload.single('heroImage'), async (req, res) => {
+  const { heading, subtitle, existingImage } = req.body;
+  let heroImage = existingImage || '/assets/madinah/hero-default.jpg';
+  if (req.file) {
+    heroImage = '/assets/madinah/' + req.file.filename;
+  }
+  const data = { heading, subtitle, heroImage };
   try {
     await pool.query(
       'INSERT INTO settings (`key`, value) VALUES (?, ?) ON DUPLICATE KEY UPDATE value = VALUES(value), updated_at = CURRENT_TIMESTAMP',

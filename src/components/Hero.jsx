@@ -6,10 +6,14 @@ import { useSiteData } from "../context/DataContext";
 const Hero = () => {
   const { hero } = useSiteData();
 
+  // Use database image if available, otherwise fallback to static
+  const bgImage = hero.heroImage || HeroBackground;
+  const bgUrl = bgImage.startsWith('data:') ? bgImage : bgImage;
+
   return (
     <section
       className="relative bg-cover bg-center h-[70vh] md:h-[90vh] flex items-center"
-      style={{ backgroundImage: `url(${HeroBackground})` }}
+      style={{ backgroundImage: `url(${bgUrl})` }}
     >
       <div className="absolute inset-0 bg-black/50"></div>
 

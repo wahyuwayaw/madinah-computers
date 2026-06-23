@@ -2,6 +2,7 @@ export const DEFAULT_HERO = {
   heading: "Solusi Laptop & Komputer Terpercaya",
   subtitle:
     "Jual & Beli Laptop, Rakit PC Gaming, Perbaikan, CCTV & SmartHome. Melayani dengan profesional sejak 2015.",
+  heroImage: "/assets/madinah/hero-default.jpg",
 };
 
 export const DEFAULT_ABOUT = {
