@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login Admin - Madinah Computers</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/admin/public/admin.css">
+  <link rel="stylesheet" href="./public/admin.css">
 </head>
 <body class="login-page">
   <div class="login-container">
@@ -18,7 +18,7 @@
       <% if (error) { %>
         <div class="alert alert-error"><%= error %></div>
       <% } %>
-      <form method="POST" action="/admin/login" class="login-form">
+      <form method="POST" action="" class="login-form">
         <div class="form-group">
           <label for="username"><i class="fas fa-user"></i> Username</label>
           <input type="text" id="username" name="username" required autofocus placeholder="Masukkan username">

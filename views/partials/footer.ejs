@@ -2,11 +2,35 @@
     </main>
   </div>
   <script>
-    // Mobile sidebar toggle
-    document.querySelector('.topbar')?.addEventListener('click', (e) => {
-      if (e.target.closest('.menu-toggle') || window.innerWidth <= 768) {
-        document.querySelector('.sidebar').classList.toggle('open');
-      }
+    // Sidebar toggle
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    const toggle = document.getElementById('menuToggle');
+
+    function openSidebar() {
+      sidebar.classList.add('open');
+      overlay.classList.add('show');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeSidebar() {
+      sidebar.classList.remove('open');
+      overlay.classList.remove('show');
+      document.body.style.overflow = '';
+    }
+
+    if (toggle) toggle.addEventListener('click', openSidebar);
+    if (overlay) overlay.addEventListener('click', closeSidebar);
+
+    // Close sidebar on nav item click (mobile)
+    sidebar.querySelectorAll('.nav-item').forEach(item => {
+      item.addEventListener('click', () => {
+        if (window.innerWidth <= 768) closeSidebar();
+      });
+    });
+
+    // Close sidebar on resize to desktop
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 768) closeSidebar();
     });
   </script>
 </body>

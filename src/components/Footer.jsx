@@ -12,6 +12,11 @@ const Footer = () => {
   const MotionFooter = isHomePage ? "footer" : motion.footer;
   const MotionDiv = isHomePage ? "div" : motion.div;
 
+  const phones = Array.isArray(footer.phones) ? footer.phones : [];
+  const emails = Array.isArray(footer.emails) ? footer.emails : [];
+  const contactPersons = Array.isArray(footer.contactPersons) ? footer.contactPersons : [];
+  const partners = Array.isArray(footer.partners) ? footer.partners : [];
+
   return (
     <MotionFooter
       id="contact"
@@ -37,79 +42,91 @@ const Footer = () => {
             <div className="flex items-start gap-2">
               <MapPin size={12} className="text-sky-500 mt-0.5" />
               <p className="text-gray-400">
-                {footer.officeAddress.split("\n").map((line, i) => (
+                {(footer.officeAddress || "").split("\n").map((line, i, arr) => (
                   <React.Fragment key={i}>
                     {line}
-                    {i < footer.officeAddress.split("\n").length - 1 && <br />}
+                    {i < arr.length - 1 && <br />}
                   </React.Fragment>
                 ))}
               </p>
             </div>
 
-            <div className="flex items-start gap-2">
-              <MapPin size={12} className="text-sky-500 mt-0.5" />
-              <div className="flex flex-col text-gray-400">
-                <p>Workshop : {footer.workshopAddress}</p>
-                <p>Telp : {footer.phones.join(", ")}</p>
-                <div className="flex items-start gap-2 -ml-5 mt-0.5">
-                  <Mail size={12} className="text-sky-500" />
-                  {footer.emails.map((email, i) => (
-                    <a key={i} href={`mailto:${email}`} className="hover:text-sky-400">
-                      {email}
-                    </a>
-                  ))}
+            {footer.workshopAddress && (
+              <div className="flex items-start gap-2">
+                <MapPin size={12} className="text-sky-500 mt-0.5" />
+                <div className="flex flex-col text-gray-400">
+                  <p>Workshop : {footer.workshopAddress}</p>
+                  {phones.length > 0 && <p>Telp : {phones.join(", ")}</p>}
+                  {emails.length > 0 && (
+                    <div className="flex items-start gap-2 -ml-5 mt-0.5">
+                      <Mail size={12} className="text-sky-500" />
+                      {emails.map((email, i) => (
+                        <a key={i} href={`mailto:${email}`} className="hover:text-sky-400">
+                          {email}
+                        </a>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
 
         {/* Kolom 2 */}
-        <div>
-          <h3 className="text-white font-semibold mb-1.5 text-[13px]">Contact Person</h3>
-          <ul className="space-y-1.5">
-            {footer.contactPersons.map((cp, i) => (
-              <li key={i}>
-                <span className="text-white font-medium">{cp.name}</span>
-                <div className="flex items-center gap-1.5">
-                  <Phone size={12} className="text-sky-500" />
-                  <span>{cp.phone}</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <Mail size={12} className="text-sky-500" />
-                  <a href={`mailto:${cp.email}`} className="hover:text-sky-400">
-                    {cp.email}
-                  </a>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
+        {contactPersons.length > 0 && (
+          <div>
+            <h3 className="text-white font-semibold mb-1.5 text-[13px]">Contact Person</h3>
+            <ul className="space-y-1.5">
+              {contactPersons.map((cp, i) => (
+                <li key={i}>
+                  <span className="text-white font-medium">{cp.name}</span>
+                  {cp.phone && (
+                    <div className="flex items-center gap-1.5">
+                      <Phone size={12} className="text-sky-500" />
+                      <span>{cp.phone}</span>
+                    </div>
+                  )}
+                  {cp.email && (
+                    <div className="flex items-center gap-1.5">
+                      <Mail size={12} className="text-sky-500" />
+                      <a href={`mailto:${cp.email}`} className="hover:text-sky-400">
+                        {cp.email}
+                      </a>
+                    </div>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
 
         {/* Kolom 3 */}
-        <div>
-          <h3 className="text-white font-semibold mb-1.5 text-[13px]"></h3>
-          <ul className="space-y-1.5">
-            {footer.partners.map((partner, i) => (
-              <li key={i}>
-                <span className="text-sky-500 font-bold block text-[13px]">
-                  {partner.name}
-                </span>
-                <div className="flex items-center gap-1.5">
-                  <Globe size={12} className="text-sky-500" />
-                  <a
-                    href={partner.website}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="hover:text-sky-400"
-                  >
-                    {partner.website.replace("https://", "www.")}
-                  </a>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
+        {partners.length > 0 && (
+          <div>
+            <h3 className="text-white font-semibold mb-1.5 text-[13px]"></h3>
+            <ul className="space-y-1.5">
+              {partners.map((partner, i) => (
+                <li key={i}>
+                  <span className="text-sky-500 font-bold block text-[13px]">
+                    {partner.name}
+                  </span>
+                  <div className="flex items-center gap-1.5">
+                    <Globe size={12} className="text-sky-500" />
+                    <a
+                      href={partner.website}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="hover:text-sky-400"
+                    >
+                      {partner.website.replace("https://", "www.")}
+                    </a>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
 
       <MotionDiv

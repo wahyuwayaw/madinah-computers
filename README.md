@@ -1,150 +1,233 @@
-# 🖥️ PT Madinah Computers — Company Profile
+# 🖥️ Madinah Computers — Company Profile
 
-Website company profile untuk **PT Madinah Computers**, toko komputer terpercaya di Parung Panjang. Dibangun dengan arsitektur **hybrid** yang menggabungkan React.js SPA (frontend publik) dan Express.js + EJS (backend + admin panel).
+Website company profile untuk **Madinah Computers** — toko komputer, laptop, rakit PC gaming, CCTV & SmartHome.
 
-## 📸 Demo
+**Stack:** React (Vite) + Node.js (Express) + MySQL + EJS Admin Panel
 
-| Halaman | URL |
-|---------|-----|
-| Website Publik | `http://localhost:3000/` |
-| Panel Admin | `http://localhost:3000/admin` |
-| Dokumentasi | `http://localhost:3000/docs` |
-| API | `http://localhost:3000/api/all` |
+---
 
-**Default Admin:** `admin` / `admin123456`
+## 📸 Fitur
 
-## 🏗️ Arsitektur
+- **Hero Section** — banner utama dengan heading, subtitle, dan gambar
+- **About** — profil perusahaan dengan gambar
+- **Services** — daftar layanan (editable via admin)
+- **Software** — daftar software yang tersedia
+- **Footer** — kontak dan info toko
+- **Admin Panel** — CRUD semua konten via EJS server-side rendering
+- **Download Page** — link download file
+- **MySQL Database-driven** — semua data tersimpan di MySQL
 
-```
-┌───────────────────────────────────┐
-│      React.js + Vite + Tailwind   │ ← Frontend Publik (SPA)
-│      Landing, Katalog, Kontak     │
-└──────────────┬────────────────────┘
-               │ fetch() API
-               ▼
-┌───────────────────────────────────┐
-│     Express.js 4.x + EJS          │ ← Backend
-│     REST API + Admin SSR          │
-└──────────────┬────────────────────┘
-               │ mysql2
-               ▼
-┌───────────────────────────────────┐
-│           MySQL 8                 │ ← Database
-└───────────────────────────────────┘
-```
+---
 
-## 🛠️ Tech Stack
+## ⚙️ Requirements
 
-- **Runtime:** Node.js 18+
-- **Backend:** Express.js 4.21
-- **Template:** EJS 3.1 (admin panel)
-- **Database:** MySQL 8 + mysql2 driver
-- **Frontend:** React 19 + Vite 7
-- **CSS:** Tailwind CSS 3.4
-- **Animations:** Framer Motion 12
-- **Icons:** Lucide React + React Icons
-- **Auth:** express-session + bcryptjs
+- **Node.js** v18+ (tested on v20)
+- **MySQL** 5.7+ / MariaDB 10.4+
+- **npm** atau **yarn**
 
-## 📥 Instalasi
+---
 
-### 1. Clone & Install
+## 🚀 Setup Local
+
+### 1. Clone repo
 
 ```bash
 git clone https://github.com/wahyuwayaw/madinah-computers.git
 cd madinah-computers
+```
+
+### 2. Install dependencies
+
+```bash
 npm install
 ```
 
-### 2. Setup Database
+### 3. Buat database MySQL
 
 ```sql
--- Login ke MySQL
-mysql -u root -p
-
--- Buat database & user
 CREATE DATABASE madinah_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-CREATE USER 'madinah_api'@'localhost' IDENTIFIED BY 'Mad1n4hAPI!';
-GRANT ALL PRIVILEGES ON madinah_db.* TO 'madinah_api'@'localhost';
-FLUSH PRIVILEGES;
-EXIT;
+
+USE madinah_db;
+
+-- Tabel settings (menyimpan semua konten website)
+CREATE TABLE settings (
+  `key` VARCHAR(100) NOT NULL PRIMARY KEY,
+  value JSON NOT NULL,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+-- Tabel admin users
+CREATE TABLE admin_users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(50) NOT NULL UNIQUE,
+  password_hash VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+-- Insert default admin (password: admin123456)
+INSERT INTO admin_users (username, password_hash) VALUES (
+  'admin',
+  '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'
+);
+
+-- Insert default content
+INSERT INTO settings (`key`, value) VALUES
+('hero', '{"heading":"Madinah Computers Solusi Terbaik!","subtitle":"Jual & Beli Laptop, Rakit PC Gaming, Perbaikan, CCTV & SmartHome.","heroImage":""}'),
+('about', '{"label":"Tentang Kami","heading":"Madinah Computers","description":"Melayani sejak 2015","image1":"","image2":""}'),
+('services', '[]'),
+('software', '[]'),
+('footer', '{"phones":[],"emails":[],"address":"","socialMedia":[]}');
 ```
+
+### 4. Buat file `.env`
 
 ```bash
-# Import skema
-mysql -u madinah_api -p'Mad1n4hAPI!' madinah_db < db.sql
+cp .env.example .env
 ```
 
-### 3. Run
+Edit `.env`:
+
+```env
+DB_HOST=127.0.0.1
+DB_USER=root
+DB_PASS=your_mysql_password
+DB_NAME=madinah_db
+SESSION_SECRET=random_secret_here
+PORT=3002
+```
+
+### 5. Build frontend (React + Vite)
 
 ```bash
-# Development (2 terminal)
-npm run start     # Backend: http://localhost:3000
-npm run dev       # Frontend: http://localhost:5173
-
-# Production (1 terminal)
-npm run build     # Build React ke dist/
-npm run start     # Semua jalan di http://localhost:3000
+npm run build
 ```
 
-## 📂 Struktur Proyek
+### 6. Jalankan server
+
+```bash
+node server.js
+```
+
+Server berjalan di:
+- **Website:** http://localhost:3002/
+- **Admin:** http://localhost:3002/admin
+
+### 7. Login Admin
+
+- **Username:** `admin`
+- **Password:** `admin123456`
+
+---
+
+## 📁 Struktur Project
 
 ```
 madinah-computers/
 ├── server.js              # Express server utama
 ├── db.js                  # MySQL connection pool
-├── db.sql                 # Skema database
-├── package.json
-├── vite.config.js
-├── docs.html              # Dokumentasi lengkap
 ├── routes/
-│   ├── api.js             # REST API (/api/*)
-│   └── admin.js           # Admin routes (/admin/*)
+│   ├── api.js             # API routes (CRUD settings)
+│   └── admin.js           # Admin routes (EJS rendering)
 ├── views/
-│   ├── admin/             # EJS templates (login, dashboard, CRUD)
-│   └── partials/          # Header, sidebar, footer
+│   ├── admin/             # EJS admin templates
+│   │   ├── login.ejs
+│   │   ├── dashboard.ejs
+│   │   ├── hero.ejs
+│   │   ├── about.ejs
+│   │   ├── services.ejs
+│   │   ├── software.ejs
+│   │   └── footer.ejs
+│   └── partials/
+│       ├── header.ejs     # Sidebar + topbar
+│       └── footer.ejs     # JS sidebar toggle
 ├── public/
 │   ├── admin.css          # Admin panel styles
-│   └── adapter.js         # localStorage → MySQL bridge
-├── src/                   # React frontend source
-│   ├── components/        # UI components
-│   ├── pages/             # Page components
-│   ├── context/           # React Context
-│   └── data/              # Default data
-└── dist/                  # Built frontend (output)
+│   ├── adapter.js         # localStorage → MySQL adapter
+│   └── assets/            # Images (logo, produk, etc)
+├── src/                   # React source code
+├── dist/                  # Built frontend
+├── .env.example           # Environment variables template
+└── package.json
 ```
+
+---
 
 ## 🔌 API Endpoints
 
-| Method | Endpoint | Fungsi |
-|--------|----------|--------|
-| `GET` | `/api/all` | Ambil semua settings |
-| `GET` | `/api/data/:key` | Ambil satu setting |
-| `POST` | `/api/data/:key` | Update setting |
-| `POST` | `/api/auth` | Login admin |
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/data/:key` | Ambil data (hero, about, services, software, footer) |
+| POST | `/api/data/:key` | Update data |
+| GET | `/api/data/all` | Ambil semua data |
 
-**Valid keys:** `hero`, `about`, `services`, `software`, `bidang`, `core_services`, `footer`
+---
 
-## ⚙️ Panel Admin
+## 🌐 Deploy ke Server
 
-| Halaman | URL | Fungsi |
-|---------|-----|--------|
-| Dashboard | `/admin` | Ringkasan konten |
-| Hero | `/admin/hero` | Edit heading & subtitle |
-| About | `/admin/about` | Edit deskripsi & gambar |
-| Services | `/admin/services` | CRUD layanan |
-| Software | `/admin/software` | CRUD software |
-| Footer | `/admin/footer` | Edit kontak & alamat |
+### Nginx config (reverse proxy)
 
-## 📖 Dokumentasi
+```nginx
+# API
+location /madinah/api/ {
+    proxy_pass http://127.0.0.1:3002/api/;
+}
 
-Buka [docs.html](docs.html) atau akses `/docs` saat server berjalan untuk dokumentasi lengkap termasuk:
-- Arsitektur sistem
-- Langkah instalasi detail
-- Skema database
-- Dokumentasi API
-- Deployment guide
-- Troubleshooting
+# Admin
+location /madinah/admin/public/ {
+    alias /path/to/madinah-computers/public/;
+}
+location /madinah/admin/ {
+    proxy_pass http://127.0.0.1:3002/admin/;
+}
 
-## 📄 License
+# Frontend
+location /madinah/ {
+    alias /path/to/madinah-computers/dist/;
+    try_files $uri $uri/ /madinah/index.html;
+}
+```
 
-© 2026 PT Madinah Computers. All rights reserved.
+### systemd service
+
+```ini
+[Unit]
+Description=Madinah Computers Backend
+After=network.target mysql.service
+
+[Service]
+Type=simple
+User=www
+WorkingDirectory=/path/to/madinah-computers
+ExecStart=/usr/bin/node server.js
+Restart=always
+RestartSec=5
+Environment=NODE_ENV=production
+
+[Install]
+WantedBy=multi-user.target
+```
+
+---
+
+## 📝 Catatan
+
+- Admin panel menggunakan **EJS** (server-side rendering)
+- Website publik menggunakan **React SPA** (client-side)
+- Data adapter (`adapter.js`) meng-override `localStorage` → fetch dari MySQL API
+- Upload gambar tersimpan di `public/assets/madinah/`
+- Max upload size: **5MB**
+
+---
+
+## 🛠️ Tech Stack
+
+- **Frontend:** React 18 + Vite
+- **Backend:** Express.js + EJS
+- **Database:** MySQL (mysql2 driver)
+- **Auth:** express-session + bcryptjs
+- **Upload:** Multer
+- **CSS:** Custom (Inter font, Font Awesome icons)
+
+---
+
+**Made with ❤️ by Wahyu Sugiarto**

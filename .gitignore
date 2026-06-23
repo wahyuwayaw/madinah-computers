@@ -2,3 +2,21 @@ node_modules/
 .env
 *.log
 .DS_Store
+
+# Uploaded hero images (user-generated, don't commit)
+public/assets/madinah/hero-*.jpg
+public/assets/madinah/hero-*.png
+public/assets/madinah/hero-*.jfif
+dist/assets/madinah/hero-*.jpg
+dist/assets/madinah/hero-*.png
+
+# SQLite database (if any)
+*.db
+*.sqlite
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+Thumbs.db

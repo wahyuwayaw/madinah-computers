@@ -4,33 +4,191 @@
   <div class="alert alert-success"><i class="fas fa-check-circle"></i> Berhasil disimpan!</div>
 <% } %>
 
-<form method="POST" action="/admin/hero" enctype="multipart/form-data" class="editor-form">
+<form method="POST" action="./hero" enctype="multipart/form-data" class="editor-form" id="heroForm">
   <div class="form-card">
     <div class="form-group">
-      <label for="heading">Heading</label>
+      <label for="heading"><i class="fas fa-heading"></i> Heading</label>
       <input type="text" id="heading" name="heading" value="<%= data.heading || '' %>" required>
       <small>Gunakan &lt;br /&gt; untuk baris baru</small>
     </div>
     <div class="form-group">
-      <label for="subtitle">Subtitle</label>
+      <label for="subtitle"><i class="fas fa-align-left"></i> Subtitle</label>
       <textarea id="subtitle" name="subtitle" rows="3"><%= data.subtitle || '' %></textarea>
     </div>
     <div class="form-group">
-      <label for="heroImage">Gambar Hero (Background)</label>
-      <% if (data.heroImage) { %>
-        <div style="margin-bottom:10px">
-          <img src="<%= data.heroImage %>" alt="Hero" style="max-width:100%;max-height:200px;border-radius:8px;border:1px solid #ddd">
+      <label><i class="fas fa-image"></i> Gambar Hero (Background)</label>
+      
+      <!-- Current image display with change button -->
+      <div class="image-section">
+        <div class="image-preview-box" id="imagePreviewBox">
+          <% if (data.heroImage) { %>
+            <img src="<%= data.heroImage %>?t=<%= Date.now() %>" alt="Hero" class="hero-preview-img" id="heroPreview">
+          <% } else { %>
+            <div class="no-image" id="heroPreview">
+              <i class="fas fa-image"></i>
+              <span>Belum ada gambar</span>
+            </div>
+          <% } %>
         </div>
-      <% } %>
-      <input type="file" id="heroImage" name="heroImage" accept="image/*">
-      <small>Upload gambar baru untuk mengganti background hero. Kosongkan jika tidak ingin mengubah.</small>
-      <input type="hidden" name="existingImage" value="<%= data.heroImage || '' %>">
+        
+        <div class="image-actions">
+          <label for="heroImage" class="btn btn-primary btn-change">
+            <i class="fas fa-exchange-alt"></i> Ganti Gambar
+          </label>
+          <input type="file" id="heroImage" name="heroImage" accept="image/*" style="display:none">
+          <small class="helper-text">Klik tombol di atas untuk memilih gambar baru</small>
+        </div>
+      </div>
+      
+      <div class="selected-file-info" id="fileInfo" style="display:none">
+        <i class="fas fa-check-circle" style="color:var(--success)"></i>
+        <span id="fileName"></span>
+        <button type="button" class="btn-link" id="cancelFile" title="Batal">
+          <i class="fas fa-times"></i> Batal
+        </button>
+      </div>
+      
+      <input type="hidden" name="existingImage" value="<%= data.heroImage || '' %>" id="existingImage">
     </div>
     <div class="form-actions">
       <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Simpan</button>
-      <a href="/admin" class="btn btn-secondary">Kembali</a>
+      <a href="/admin" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Kembali</a>
     </div>
   </div>
 </form>
+
+<style>
+  .image-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+  .image-preview-box {
+    width: 100%;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 2px solid var(--gray-200);
+    background: var(--gray-50);
+    min-height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .hero-preview-img {
+    width: 100%;
+    max-height: 220px;
+    object-fit: cover;
+    display: block;
+    transition: opacity 0.2s;
+  }
+  .no-image {
+    text-align: center;
+    padding: 2rem 1rem;
+    color: var(--gray-400);
+  }
+  .no-image i {
+    font-size: 2.5rem;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+  .no-image span {
+    font-size: 0.85rem;
+  }
+  .image-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+  .btn-change {
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .helper-text {
+    color: var(--gray-500);
+    font-size: 0.75rem;
+  }
+  .selected-file-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 0.85rem;
+    background: var(--success-light);
+    border-radius: 8px;
+    font-size: 0.82rem;
+    color: #166534;
+    margin-top: 0.5rem;
+  }
+  .btn-link {
+    background: none;
+    border: none;
+    color: var(--danger);
+    cursor: pointer;
+    font-size: 0.8rem;
+    padding: 0;
+    margin-left: auto;
+  }
+  .btn-link:hover {
+    text-decoration: underline;
+  }
+  .image-changed {
+    border-color: var(--success) !important;
+    box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.15);
+  }
+</style>
+
+<script>
+  const fileInput = document.getElementById('heroImage');
+  const preview = document.getElementById('heroPreview');
+  const previewBox = document.getElementById('imagePreviewBox');
+  const fileInfo = document.getElementById('fileInfo');
+  const fileName = document.getElementById('fileName');
+  const cancelBtn = document.getElementById('cancelFile');
+  const existingImageInput = document.getElementById('existingImage');
+  const originalSrc = preview ? preview.src : '';
+
+  // File selected
+  fileInput.addEventListener('change', () => {
+    if (fileInput.files.length) {
+      const file = fileInput.files[0];
+      showPreview(file);
+      fileName.textContent = file.name;
+      fileInfo.style.display = 'flex';
+      previewBox.classList.add('image-changed');
+    }
+  });
+
+  function showPreview(file) {
+    if (!file || !file.type.startsWith('image/')) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      if (preview.tagName === 'IMG') {
+        preview.src = e.target.result;
+      } else {
+        // Replace no-image div with img
+        const img = document.createElement('img');
+        img.src = e.target.result;
+        img.alt = 'Hero';
+        img.className = 'hero-preview-img';
+        img.id = 'heroPreview';
+        preview.replaceWith(img);
+      }
+    };
+    reader.readAsDataURL(file);
+  }
+
+  // Cancel file selection
+  cancelBtn.addEventListener('click', () => {
+    fileInput.value = '';
+    fileInfo.style.display = 'none';
+    previewBox.classList.remove('image-changed');
+    
+    // Restore original image
+    if (preview && preview.tagName === 'IMG') {
+      preview.src = originalSrc;
+    }
+  });
+</script>
 
 <%- include('../partials/footer') %>

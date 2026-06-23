@@ -2,6 +2,7 @@ import { Router } from 'express';
 import bcrypt from 'bcryptjs';
 import multer from 'multer';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 import pool from '../db.js';
 
@@ -13,7 +14,7 @@ const storage = multer.diskStorage({
   destination: path.join(__dirname, '..', 'public', 'assets', 'madinah'),
   filename: (req, file, cb) => {
     const ext = path.extname(file.originalname);
-    cb(null, 'hero-' + Date.now() + ext);
+    cb(null, 'hero-' + Date.now() + '.jpg');
   }
 });
 const upload = multer({ storage, limits: { fileSize: 5 * 1024 * 1024 } });
@@ -23,7 +24,7 @@ const router = Router();
 // Auth middleware
 function requireAuth(req, res, next) {
   if (req.session && req.session.admin) return next();
-  res.redirect('/admin/login');
+  res.redirect('./login');
 }
 
 // GET /admin/login
@@ -38,13 +39,13 @@ router.post('/login', async (req, res) => {
     const [rows] = await pool.query('SELECT id, username, password_hash FROM admin_users WHERE username = ?', [username]);
     if (rows.length && bcrypt.compareSync(password, rows[0].password_hash)) {
       req.session.admin = { id: rows[0].id, username: rows[0].username };
-      return res.redirect('/admin');
+      return res.redirect('./');
     }
   } catch (err) {
     // Fallback
     if (username === 'admin' && password === 'admin123456') {
       req.session.admin = { id: 1, username: 'admin' };
-      return res.redirect('/admin');
+      return res.redirect('./');
     }
   }
   res.render('admin/login', { error: 'Username atau password salah' });
@@ -53,7 +54,7 @@ router.post('/login', async (req, res) => {
 // GET /admin/logout
 router.get('/logout', (req, res) => {
   req.session.destroy();
-  res.redirect('/admin/login');
+  res.redirect('./login');
 });
 
 // GET /admin - Dashboard
@@ -81,9 +82,15 @@ router.get('/hero', requireAuth, async (req, res) => {
 // POST /admin/hero
 router.post('/hero', requireAuth, upload.single('heroImage'), async (req, res) => {
   const { heading, subtitle, existingImage } = req.body;
-  let heroImage = existingImage || '/assets/madinah/hero-default.jpg';
+  let heroImage = existingImage || '/madinah/public/assets/madinah/hero-default.jpg';
   if (req.file) {
-    heroImage = '/assets/madinah/' + req.file.filename;
+    heroImage = '/madinah/public/assets/madinah/' + req.file.filename;
+    // Sync uploaded file to nginx static location
+    try {
+      const src = path.join(__dirname, '..', 'public', 'assets', 'madinah', req.file.filename);
+      const dest = '/www/wwwroot/madinah/public/assets/madinah/' + req.file.filename;
+      fs.copyFileSync(src, dest);
+    } catch (syncErr) {}
   }
   const data = { heading, subtitle, heroImage };
   try {
@@ -92,7 +99,7 @@ router.post('/hero', requireAuth, upload.single('heroImage'), async (req, res) =
       ['hero', JSON.stringify(data)]
     );
   } catch (err) {}
-  res.redirect('/admin/hero?saved=1');
+  res.redirect('./hero?saved=1');
 });
 
 // GET /admin/about
@@ -114,7 +121,7 @@ router.post('/about', requireAuth, async (req, res) => {
       ['about', JSON.stringify(data)]
     );
   } catch (err) {}
-  res.redirect('/admin/about?saved=1');
+  res.redirect('./about?saved=1');
 });
 
 // GET /admin/services
@@ -136,7 +143,7 @@ router.post('/services', requireAuth, async (req, res) => {
       ['services', JSON.stringify(data)]
     );
   } catch (err) {}
-  res.redirect('/admin/services?saved=1');
+  res.redirect('./services?saved=1');
 });
 
 // GET /admin/software
@@ -158,7 +165,7 @@ router.post('/software', requireAuth, async (req, res) => {
       ['software', JSON.stringify(data)]
     );
   } catch (err) {}
-  res.redirect('/admin/software?saved=1');
+  res.redirect('./software?saved=1');
 });
 
 // GET /admin/footer
@@ -183,7 +190,7 @@ router.post('/footer', requireAuth, async (req, res) => {
       ['footer', JSON.stringify(data)]
     );
   } catch (err) {}
-  res.redirect('/admin/footer?saved=1');
+  res.redirect('./footer?saved=1');
 });
 
 export default router;

@@ -11,7 +11,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3002;
 
 // View engine
 app.set('view engine', 'ejs');
@@ -51,6 +51,9 @@ app.get('/adapter.js', (req, res) => {
 app.get('/docs', (req, res) => {
   res.sendFile(path.join(__dirname, 'docs.html'));
 });
+
+// Serve public assets (admin CSS, etc)
+app.use('/public', express.static(path.join(__dirname, 'public')));
 
 // Serve React dist (static assets first, then SPA fallback)
 app.use(express.static(path.join(__dirname, 'dist')));
